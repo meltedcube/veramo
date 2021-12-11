@@ -101,7 +101,8 @@ export class DIDManager implements IAgentPlugin {
       let existingIdentifier
       try {
         existingIdentifier = await this.store.get({ alias: args.alias, provider: providerName })
-      } catch (e) {}
+      } catch (e) {
+      }
       if (existingIdentifier) {
         throw Error(`Identifier with alias: ${args.alias}, provider: ${providerName} already exists`)
       }
@@ -142,6 +143,7 @@ export class DIDManager implements IAgentPlugin {
     identifier.alias = alias
     return await this.store.import(identifier)
   }
+
   /** {@inheritDoc @veramo/core#IDIDManager.didManagerImport} */
   async didManagerImport(
     identifier: MinimalImportableIdentifier,
@@ -154,6 +156,7 @@ export class DIDManager implements IAgentPlugin {
     }
     const services: IService[] = [...(identifier?.services || [])]
     const importedDID = {
+      controllerKeyId: keys[0]?.kid, // pick the first key as controller, but allow user to override.
       ...identifier,
       keys,
       services,
